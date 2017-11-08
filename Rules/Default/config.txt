@@ -1,0 +1,14 @@
+[program_details]
+source = https://github.com/lakiw/py_omen
+program = createNG.py
+version = 0.1
+author = Matt Weir
+contact = cweir@vt.edu
+
+[training_settings]
+max_level = 10
+ngram = 4
+uuid = 8c42f4bb-5c3e-4349-97e7-17ffe9fb6fae
+training_file = rockyou_1.txt
+alphabet_encoding = utf-8
+
