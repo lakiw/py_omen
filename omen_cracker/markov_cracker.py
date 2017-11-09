@@ -27,7 +27,7 @@ class MarkovCracker:
     # Initializes the cracker
     # If grammar is none, then the cracker will basically act as a noop
     ############################################################################################
-    def __init__(self, grammar, version, base_directory, session_name, rule_name, restore = False):
+    def __init__(self, grammar, version, base_directory, session_name, rule_name, uuid, restore = False):
         
         ##--Store the ruleset
         self.grammar = grammar
@@ -39,7 +39,10 @@ class MarkovCracker:
         self.version = version
         
         ##--The rule name this is running on, used for saving/loading files
-        self.rule_name = version
+        self.rule_name = rule_name
+        
+        ##--The UUID of the rule file to make sure re-training didn't happen between save and restore
+        self.uuid = uuid
         
         ##--Where to save the save file
         self.full_save_file_path = os.path.join(base_directory, session_name + '.sav')
@@ -101,10 +104,7 @@ class MarkovCracker:
             if level == None:
                 self.increase_target_level = True
                 ##--Might as well initialize the target level to be the lowest possible level
-                self.target_level = self.start_length + self.start_ip
-                
-                self.cur_len = [self.start_length, 0]
-                self.cur_ip  = [self.start_ip, 0]
+                self.target_level = self.start_length + self.start_ip               
                 
             ##--Only generate guesses for the current level
             else:
@@ -112,10 +112,11 @@ class MarkovCracker:
                 if self.start_length + self.start_ip > level:
                     return None
                 self.increase_target_level = False
-                self.target_level = level        
-
-                self.cur_len = [self.start_length, 0]
-                self.cur_ip  = [self.start_ip, 0]                       
+                self.target_level = level                            
+        
+            ##--Set the starting IP and Length--
+            self.cur_len = [self.start_length, 0]
+            self.cur_ip  = [self.start_ip, 0]   
         
             ##--Create the guess structure        
             self.cur_guess = GuessStructure(
@@ -282,9 +283,10 @@ class MarkovCracker:
     ####################################################################################################################
     def save_session(self):
         with open(self.full_save_file_path, 'wb') as file:
-            ##--Save the level and rule info for sanity checking when starting up again
+            ##--Save the level, rule, and uuid info for sanity checking when starting up again
             pickle.dump(self.version, file)
             pickle.dump(self.rule_name, file)
+            pickle.dump(self.uuid, file)
             
             ##--Save the Markov Cracker variables here
             pickle.dump(self.target_level, file)
@@ -305,8 +307,42 @@ class MarkovCracker:
         with open(self.full_save_file_path, 'rb') as file:
             
             ##--Load the version and rule name to make sure the save file is compatible with this programs
-            self.version = pickle.load(file)
-            self.rule_name = pickle.load(file)
+            version = pickle.load(file)
+            rule_name = pickle.load(file)
+            uuid = pickle.load(file)
+            
+            ##--Perform sanity checks to make sure the rule name, uuid, and version are the same
+            if (version != self.version):
+                print("Saved file created using a different version of enumNG.py", file=sys.stderr)
+                print("Current version of this program: " + str(self.version),file=sys.stderr)
+                print("Version that this save file was created with: " + str(version),file=sys.stderr)
+                print("", file=sys.stderr)
+                print("Due to the beta nature of this program, currently there is ", file=sys.stderr)
+                print("no backwards compatability support for loading save files", file=sys.stderr)
+                print("created using previous versions of this program", file=sys.stderr)
+                print("", file=sys.stderr)
+                raise Exception
+            
+            if (rule_name != self.rule_name):
+                print("Make sure you specify the same rule name you created the save file with", file=sys.stderr)
+                print("Current Ruleset Name: " + str(self.rule_name),file=sys.stderr)
+                print("Save File Ruleset Name: " + str(rule_name), file=sys.stderr)
+                print("", file=sys.stderr)
+                print("Re-run enumNG.py with the save file ruleset", file=sys.stderr)
+                print("I know, this could be automated to make it easier. It's on my todo list.", file=sys.stderr)
+                print("", file=sys.stderr)
+                raise Exception
+            
+            if (uuid != self.uuid):
+                print("It appears you re-trained the ruleset that the save file used", file=sys.stderr)
+                print("Ruleset Name: " + str(self.rule_name),file=sys.stderr)
+                print("Current UUID of Ruleset: " + str(self.uuid), file=sys.stderr)
+                print("UUID of Saved Session: " + str(uuid), file=sys.stderr)
+                print("", file=sys.stderr)
+                print("This program will likely not behave correctly if it tries to restore the session", file=sys.stderr)
+                print("with the new ruleset", file=sys.stderr)
+                print("", file=sys.stderr)
+                raise Exception
             
             ##--Reset the options for the Markov Cracker
             self.target_level = pickle.load(file)

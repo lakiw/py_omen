@@ -210,17 +210,24 @@ def main():
     print("loading ruleset: " + command_line_results['rule_name'],file=sys.stderr)
     if not load_rules(absolute_base_directory, grammar, min_version=management_vars['program_details']['version']):
         print("Error reading the ruleset, exiting", file=sys.stderr)
+        ascii_fail()
         return
     
-    ##--Initialize the Markov Cracker  
-    cracker = MarkovCracker(
-        grammar = grammar, 
-        version = management_vars['program_details']['version'], 
-        base_directory = os.path.dirname(os.path.realpath(__file__)), 
-        session_name = command_line_results['session_name'],
-        rule_name = command_line_results['rule_name'],
-        restore = command_line_results['restore'],
-        )  
+    ##--Initialize the Markov Cracker 
+    try:    
+        cracker = MarkovCracker(
+            grammar = grammar, 
+            version = management_vars['program_details']['version'], 
+            base_directory = os.path.dirname(os.path.realpath(__file__)), 
+            session_name = command_line_results['session_name'],
+            rule_name = command_line_results['rule_name'],
+            uuid = grammar['uuid'],
+            restore = command_line_results['restore'],
+            )  
+    except:
+        print("Error loading the save file, exiting", file=sys.stderr)
+        ascii_fail()
+        return
     
     ##--If there is debugging going on for parsing user supplied strings
     if command_line_results['test']:

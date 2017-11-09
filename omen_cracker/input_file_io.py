@@ -21,6 +21,7 @@ from distutils.version import LooseVersion  #--Compare the trainer version used 
 #   version: '0.1',
 #   ngram: 4,
 #   max_level: 11,
+#   uuid: 0afs-a23131...,
 #   ln: {
 #       0:[5, 7],
 #       1:[1, 2],
@@ -98,6 +99,7 @@ def _load_config(base_directory, filename, grammar):
         grammar['alphabet_encoding'] = config.get('training_settings','alphabet_encoding')
         grammar['ngram'] = config.getint('training_settings','ngram')
         grammar['max_level'] = config.getint('training_settings','max_level')
+        grammar['uuid'] = config.get('training_settings','uuid')
         
     except IOError as msg:
         print("Could not open the config file for the ruleset specified. The rule directory may not exist", file=sys.stderr)
