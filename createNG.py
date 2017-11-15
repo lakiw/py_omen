@@ -57,6 +57,7 @@ from omen_trainer.common_file_io import detect_file_encoding
 from omen_trainer.alphabet_lookup import AlphabetLookup
 from omen_trainer.trainer_file_io import TrainerFileIO
 from omen_trainer.output_file_io import save_rules_to_disk
+from omen_trainer.alphabet_generator import AlphabetGenerator
 
   
 ####################################################
@@ -71,6 +72,9 @@ def parse_command_line(runtime_options):
     group.add_argument('--training', '-t', help='The training set of passwords to train from.',
         metavar='FILENAME',required=True)
     group.add_argument('--encoding','-e', help='File encoding used to read the input training set. If not specified autodetect is used', metavar='ENCODING', required=False)
+    group.add_argument('--alphabet','-a', help='Dynamically learn alphabet from training set vs using the default [a-zA-Z0-9!.*@-_$#<?]. ' +
+    'Note, the size of alphabet will get up to the N most common characters. Higher values can slow down the cracker ' +
+    'and increase memory requirements', type=int, metavar='SIZE_OF_ALPHABET', required=False)
     
     ##Output file options    
     group = parser.add_argument_group('Output Options')
@@ -90,6 +94,12 @@ def parse_command_line(runtime_options):
         ##Input File options
         runtime_options['training_file'] = args.training
         runtime_options['encoding'] = args.encoding
+        
+        ##Alphabet options
+        runtime_options['learn_alphabet'] = args.alphabet
+        ##Sanity check of values
+        if args.alphabet and args.alphabet < 10:
+            parser.error("Minimum alphabet size is 10 because based on past experience anything less than that is probably a typo. If this is a problem please post on the github site")
         
         ##Output file options
         runtime_options['rule_name'] = args.rule
@@ -180,7 +190,7 @@ def main():
             'ngram':4,
             'max_level':10,
             'alphabet':'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!.*@-_$#<?',
-            'falphabet':None,
+            'learn_alphabet':None,
             'smooting':None,
             
             #Options added for this version of OMEN
@@ -208,6 +218,50 @@ def main():
             
         command_line_results['encoding'] = possible_file_encodings[0]
 
+    ##--Learn the alphabet if specified
+    if command_line_results['learn_alphabet'] != None:       
+        print('',file=sys.stderr)
+        print('---Starting first pass through training set to learn the alphabet---',file=sys.stderr)
+        print('',file=sys.stderr)
+        
+        ##--Open the training file IO for the first pass to learn the Alphabet
+        try:
+            input_dataset = TrainerFileIO(command_line_results['training_file'], command_line_results['encoding'])
+        ##--Error opening the file for reading
+        except Exception as msg:
+            print (error,file=sys.stderr)
+            print ("Error reading file " + self.filename ,file=sys.stderr)
+            ascii_fail()
+            print("Exiting...")
+            return
+        
+        ##--Initialize the alphabet generator
+        ag = AlphabetGenerator(alphabet_size = command_line_results['learn_alphabet'], ngram = command_line_results['ngram'])
+        
+        ##--Now loop through all the passwords to get the character counts for the alphabet
+        password = input_dataset.read_password()
+        total_count = 0
+        while password != None:
+            if total_count % 1000000 == 0 and total_count != 0:
+                print(str(total_count//1000000) +' Million', file=sys.stderr)
+            ag.process_password(password)
+            password = input_dataset.read_password()
+            total_count +=1 
+
+        ##--Now that we are done, sort and return the alphabet
+        command_line_results['alphabet'] = ag.get_alphabet()
+        
+        ##--Saving this only for printing out the location of the alphabet file to console
+        alphabet_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),'Rules',command_line_results['rule_name'],'alphabet.txt')
+        print("Done leanring alphabet", file=sys.stderr)
+        print("Displaying learned alphabet to a console usually ends poorly for non-standard characters.", file=sys.stderr)
+        print("If you want to review what the alphabet actually is you can view it at: " + alphabet_file, file=sys.stderr)
+    
+    else:
+        print("Using Default Alphabet", file=sys.stderr)
+    
+    print("", file=sys.stderr)
+    
     ##--Initialize lookup tables
     omen_trainer = AlphabetLookup(
         alphabet = command_line_results['alphabet'], 
@@ -218,7 +272,7 @@ def main():
     ##--Initialize the trainer file io
     try:
         input_dataset = TrainerFileIO(command_line_results['training_file'], command_line_results['encoding']) 
-    ##--Error opening the file for writing
+    ##--Error opening the file for reading
     except Exception as msg:
         print (error,file=sys.stderr)
         print ("Error reading file " + self.filename ,file=sys.stderr)
