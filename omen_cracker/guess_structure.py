@@ -20,7 +20,7 @@ class GuessStructure:
     # Initializes the guess structure
     # If no valid guess is available, set is_valid to False
     ############################################################################################
-    def __init__(self, cp, max_level, ip, cp_length, target_level = 0):
+    def __init__(self, cp, max_level, ip, cp_length, target_level, optimizer):
         
         ##--If this is the first guess
         self.first_guess = True
@@ -44,7 +44,10 @@ class GuessStructure:
         self.target_level = target_level
         
         ##--Initialize the parse_tree
-        self.parse_tree = []          
+        self.parse_tree = []       
+
+        ##--The optimizer
+        self.optimizer = optimizer        
         
             
     ################################################################################################
@@ -143,6 +146,7 @@ class GuessStructure:
     # Takes the parse tree and the IP and generates an actual guess to return
     ##################################################################################################
     def _format_guess(self):
+        
         guess = self.ip
         for item in self.parse_tree:
             guess += self.cp[item[0]][item[1]][item[2]]
@@ -160,11 +164,25 @@ class GuessStructure:
                 return None
             return [[ip, cp_level, 0]]
 
+        ###--Check to see if the optimizer has an answer
+        if length <= self.optimizer.max_length:
+            found, result = self.optimizer.lookup(ip, length, target_level)
+            
+            ##--If a previous result was stored in the optimizer, return it
+            if found:
+                return result
+            
         cur_level = target_level
+        
+        ##--Need to save these off for updating the optimizer
+        optimize_level_target = target_level
+        
         while cur_level >= 0:
             ##--Find the top level CP for the current level
             cp_index, cp_level = self._find_cp(ip, cur_level, 0)
             if cp_index == None:
+                if length <= self.optimizer.max_length:
+                    self.optimizer.update(ip, length, optimize_level_target, None)
                 return None
             
             next_length = length - 1            
@@ -179,13 +197,18 @@ class GuessStructure:
                     )
                     
                 if working_parse_tree != None:
-                    return [[ip, cp_level, cur_index]] + working_parse_tree
+                    result = [[ip, cp_level, cur_index]] + working_parse_tree
+                    if length <= self.optimizer.max_length:
+                        self.optimizer.update(ip, length, optimize_level_target, result)
+                    return result
                     
                 cur_index += 1
             
             ##--Need to go one less than the returned cp level so we don't loop forever
             cur_level = cp_level - 1
-              
+            
+        if length <= self.optimizer.max_length:
+            self.optimizer.update(ip, length, optimize_level_target, None)
         return None
         
         

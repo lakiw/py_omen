@@ -58,6 +58,7 @@ import time ##--Used for testing
 #Custom modules
 from omen_cracker.input_file_io import load_rules
 from omen_cracker.markov_cracker import MarkovCracker
+from omen_cracker.optimizer import Optimizer
   
 ####################################################
 # Parses the command line
@@ -213,6 +214,9 @@ def main():
         ascii_fail()
         return
     
+    ##--Initialize the TMTO optimizer
+    optimizer = Optimizer(max_length = 4)
+    
     ##--Initialize the Markov Cracker 
     try:    
         cracker = MarkovCracker(
@@ -222,7 +226,8 @@ def main():
             session_name = command_line_results['session_name'],
             rule_name = command_line_results['rule_name'],
             uuid = grammar['uuid'],
-            restore = command_line_results['restore'],
+            optimizer = optimizer,
+            restore = command_line_results['restore'],   
             )  
     except:
         print("Error loading the save file, exiting", file=sys.stderr)
@@ -246,14 +251,14 @@ def main():
         while guess != None:
             num_guesses += 1
             if command_line_results['debug']:
-                if num_guesses % 10000 == 0:
+                if num_guesses % 100000 == 0:
                     elapsed_time = time.clock() - start_time
                     print()
                     print("guesses: " + str(num_guesses))
                     print("level: " + str(level))
                     print("guesses a second: " + str(num_guesses / elapsed_time))
             else:
-                if num_guesses % 100000 == 0:
+                if num_guesses % 1000000 == 0:
                     cracker.save_session()
                 #guess = guess + '\n'
                 #guess = guess.encode('utf-8')

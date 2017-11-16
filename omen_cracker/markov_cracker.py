@@ -27,10 +27,13 @@ class MarkovCracker:
     # Initializes the cracker
     # If grammar is none, then the cracker will basically act as a noop
     ############################################################################################
-    def __init__(self, grammar, version, base_directory, session_name, rule_name, uuid, restore = False):
+    def __init__(self, grammar, version, base_directory, session_name, rule_name, uuid, optimizer = None, restore = False):
         
         ##--Store the ruleset
         self.grammar = grammar
+        
+        ##--Save the optimizer
+        self.optimizer = optimizer
         
         ##--This is the maximum level an item can be
         self.max_level = grammar['max_level']
@@ -124,7 +127,8 @@ class MarkovCracker:
                 cp = self.grammar['cp'], 
                 ip = self.grammar['ip'][self.cur_ip[0]][self.cur_ip[1]],
                 cp_length = self.grammar['ln'][self.cur_len[0]][self.cur_len[1]],
-                target_level = self.target_level  - self.cur_len[0] - self.cur_ip[0]
+                target_level = self.target_level  - self.cur_len[0] - self.cur_ip[0],
+                optimizer = self.optimizer,
                 )
 
         ##--Grab the next guess for the current length and current target        
@@ -150,7 +154,8 @@ class MarkovCracker:
                             max_level = self.max_level,
                             ip = self.grammar['ip'][self.cur_ip[0]][self.cur_ip[1]],
                             cp_length = self.grammar['ln'][self.cur_len[0]][self.cur_len[1]],
-                            target_level = self.target_level - self.cur_len[0] - self.cur_ip[0]
+                            target_level = self.target_level - self.cur_len[0] - self.cur_ip[0],
+                            optimizer = self.optimizer,
                             )
                     
                     ##--Done with all password guesses for this level, and can't increase level, exit
@@ -194,7 +199,8 @@ class MarkovCracker:
                     max_level = self.max_level,                    
                     ip = self.grammar['ip'][self.cur_ip[0]][self.cur_ip[1]],
                     cp_length = self.grammar['ln'][self.cur_len[0]][self.cur_len[1]],
-                    target_level = self.target_level  - self.cur_len[0] - self.cur_ip[0]
+                    target_level = self.target_level  - self.cur_len[0] - self.cur_ip[0],
+                    optimizer = self.optimizer,
                     )
                 return True
             
@@ -233,7 +239,8 @@ class MarkovCracker:
                     max_level = self.max_level,                      
                     ip = self.grammar['ip'][self.cur_ip[0]][self.cur_ip[1]],
                     cp_length = self.grammar['ln'][self.cur_len[0]][self.cur_len[1]],
-                    target_level = self.target_level - self.cur_len[0] - self.cur_ip[0]
+                    target_level = self.target_level - self.cur_len[0] - self.cur_ip[0],
+                    optimizer = self.optimizer,
                     )
                 return True
             
