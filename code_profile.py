@@ -6,7 +6,7 @@ import cProfile
 # Main function
 ##################################################################
 def main():
-    cProfile.run("enumNG.main()", sort ='tottime')
+    cProfile.runctx("enumNG.main()", globals(), locals(), sort ='tottime')
 
 
 if __name__ == "__main__":

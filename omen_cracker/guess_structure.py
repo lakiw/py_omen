@@ -8,6 +8,7 @@
 import sys
 import os 
 
+
 #########################################################################################################
 # Will attempt to create a guess for a particular length + IP + target level
 # Based on OMEN
@@ -149,8 +150,11 @@ class GuessStructure:
         
         guess = self.ip
         for item in self.parse_tree:
-            guess += self.cp[item[0]][item[1]][item[2]]
-            
+            guess += self.cp[item[0]][item[1]][item[2]]        
+        
+        ##--This seems slower
+        #guess = ''.join([self.ip] + [self.cp[item[0]][item[1]][item[2]] for item in self.parse_tree])       
+        
         return guess
             
             
