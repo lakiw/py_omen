@@ -253,7 +253,7 @@ def main():
         
         ##--Saving this only for printing out the location of the alphabet file to console
         alphabet_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),'Rules',command_line_results['rule_name'],'alphabet.txt')
-        print("Done leanring alphabet", file=sys.stderr)
+        print("Done learning alphabet", file=sys.stderr)
         print("Displaying learned alphabet to a console usually ends poorly for non-standard characters.", file=sys.stderr)
         print("If you want to review what the alphabet actually is you can view it at: " + alphabet_file, file=sys.stderr)
     
@@ -341,7 +341,7 @@ def main():
     
     print()    
     print("Done! Enjoy cracking passwords with OMEN!", file=sys.stderr)
-    print("To use this training set to crack, make sure you use the following option in createNG:", file=sys.stderr)
+    print("To use this training set to crack, make sure you use the following option in enumNG:", file=sys.stderr)
     print("    '-r " +command_line_results['rule_name'] + "'" , file=sys.stderr)
   
 

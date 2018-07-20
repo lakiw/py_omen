@@ -147,7 +147,7 @@ class GuessStructure:
     # Takes the parse tree and the IP and generates an actual guess to return
     ##################################################################################################
     def _format_guess(self):
-        
+
         guess = self.ip
         for item in self.parse_tree:
             guess += self.cp[item[0]][item[1]][item[2]]        

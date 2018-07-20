@@ -6,7 +6,6 @@ import sys
 import os
 import codecs
 import configparser
-import itertools
 from distutils.version import LooseVersion  #--Compare the trainer version used to generate the ruleset
 
 
