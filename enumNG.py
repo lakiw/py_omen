@@ -59,7 +59,9 @@ import time ##--Used for testing
 from omen_cracker.input_file_io import load_rules
 from omen_cracker.markov_cracker import MarkovCracker
 from omen_cracker.optimizer import Optimizer
-  
+from omen_cracker.ascii_art import ascii_fail
+
+
 ####################################################
 # Parses the command line
 ####################################################
@@ -116,41 +118,6 @@ def print_banner(program_details):
     print ("Original version writtem by the Horst Goertz Institute for IT-Security", file=sys.stderr)
     print ("Sourcecode available at " + program_details['source'], file=sys.stderr)
     print('',file=sys.stderr)  
-
-
-####################################################################################
-# ASCII art for displaying an error state before quitting
-####################################################################################
-def print_error():
-    print('',file=sys.stderr)
-    print('An error occured, shutting down',file=sys.stderr)
-    print('',file=sys.stderr)
-    print(r' \__/      \__/      \__/      \__/      \__/      \__/          \__/',file=sys.stderr)
-    print(r' (oo)      (o-)      (@@)      (xx)      (--)      (  )          (OO)',file=sys.stderr)
-    print(r'//||\\    //||\\    //||\\    //||\\    //||\\    //||\\        //||\\',file=sys.stderr)
-    print(r'  bug      bug       bug/w     dead      bug       blind      bug after',file=sys.stderr)
-    print(r'         winking   hangover    bug     sleeping    bug     whatever you did',file=sys.stderr)
-    print('',file=sys.stderr)
-
-    
-###################################################################################
-# ASCII art for more generic failure
-###################################################################################
-def ascii_fail():
-    print("                                          __ ",file=sys.stderr)
-    print("                                      _  |  |",file=sys.stderr)
-    print("                  Yye                |_| |--|",file=sys.stderr)
-    print("               .---.  e           AA | | |  |",file=sys.stderr)
-    print("              /.--./\  e        A",file=sys.stderr)
-    print("             // || \/\  e      ",file=sys.stderr)
-    print("            //|/|| |\/\   aa a    |\o/ o/--",file=sys.stderr)
-    print("           ///|\|| | \/\ .       ~o \.'\.o'",file=sys.stderr)
-    print("          //|\|/|| | |\/\ .      /.` \o'",file=sys.stderr)
-    print("         //\|/|\|| | | \/\ ( (  . \o'",file=sys.stderr)
-    print("___ __ _//|/|\|/|| | | |\/`--' '",file=sys.stderr)
-    print("__/__/__//|\|/|\|| | | | `--'",file=sys.stderr)
-    print("|\|/|\|/|\|/|\|/|| | | | |",file=sys.stderr)
-    print("",file=sys.stderr)
     
   
 ##################################################################
@@ -244,7 +211,7 @@ def main():
     print("--Starting to generate guesses-- ",file=sys.stderr)
     try:
  
-        start_time = time.clock()
+        start_time = time.time()
         num_guesses = 0
         
         guess, level = cracker.next_guess()
@@ -252,7 +219,7 @@ def main():
             num_guesses += 1
             if command_line_results['debug']:
                 if num_guesses % 100000 == 0:
-                    elapsed_time = time.clock() - start_time
+                    elapsed_time = time.time() - start_time
                     print()
                     print("guesses: " + str(num_guesses))
                     print("level: " + str(level))
@@ -277,8 +244,7 @@ def main():
     
     print('', file=sys.stderr)    
     print("--Done generating guesses-- ",file=sys.stderr)
-
-        
+      
 
 if __name__ == "__main__":
     main()

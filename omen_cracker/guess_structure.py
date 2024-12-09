@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 
 #########################################################################################################
 # Used to create and increment guesses for a particular length + IP + target level with OMEN

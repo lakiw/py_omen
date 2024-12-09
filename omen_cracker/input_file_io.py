@@ -78,21 +78,29 @@ def load_rules(base_directory, grammar, min_version=None):
     return True
     
 
-################################################################################
-# Reads the config file in
-# Uses configparser
-# Returns values in grammar
-#################################################################################
 def _load_config(base_directory, filename, grammar):
+    """
+    Reads the config file in using configparser
+
+    Inputs:
+        base_directory: (String) The directory to load the config file from
+
+        filename: (String) The name of the file to read in
+
+        grammar: (Dict) The grammar to create from the config on disk
+
+    Returns:
+        None
+    """
     try:
-        ##--Combine the directory and filename to get the full file path
+        # Combine the directory and filename to get the full file path
         full_file_path = os.path.join(base_directory, filename)
         
-        ##--Create the configparser instance to process the config file
+        # Create the configparser instance to process the config file
         config = configparser.ConfigParser()
         
-        ##--Actually open up the config file
-        config.readfp(open(full_file_path))
+        # Open up the config file
+        config.read_file(open(full_file_path))
         
         grammar['version'] = config.get('program_details','version')
         grammar['alphabet_encoding'] = config.get('training_settings','alphabet_encoding')

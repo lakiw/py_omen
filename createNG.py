@@ -58,6 +58,7 @@ from omen_trainer.alphabet_lookup import AlphabetLookup
 from omen_trainer.trainer_file_io import TrainerFileIO
 from omen_trainer.output_file_io import save_rules_to_disk
 from omen_trainer.alphabet_generator import AlphabetGenerator
+from omen_cracker.ascii_art import ascii_fail
 
   
 ####################################################
@@ -127,41 +128,6 @@ def print_banner(program_details):
     print ("Sourcecode available at " + program_details['source'], file=sys.stderr)
     print('',file=sys.stderr)  
 
-
-####################################################################################
-# ASCII art for displaying an error state before quitting
-####################################################################################
-def print_error():
-    print('',file=sys.stderr)
-    print('An error occured, shutting down',file=sys.stderr)
-    print('',file=sys.stderr)
-    print(r' \__/      \__/      \__/      \__/      \__/      \__/          \__/',file=sys.stderr)
-    print(r' (oo)      (o-)      (@@)      (xx)      (--)      (  )          (OO)',file=sys.stderr)
-    print(r'//||\\    //||\\    //||\\    //||\\    //||\\    //||\\        //||\\',file=sys.stderr)
-    print(r'  bug      bug       bug/w     dead      bug       blind      bug after',file=sys.stderr)
-    print(r'         winking   hangover    bug     sleeping    bug     whatever you did',file=sys.stderr)
-    print('',file=sys.stderr)
-
-    
-###################################################################################
-# ASCII art for more generic failure
-###################################################################################
-def ascii_fail():
-    print("                                          __ ",file=sys.stderr)
-    print("                                      _  |  |",file=sys.stderr)
-    print("                  Yye                |_| |--|",file=sys.stderr)
-    print("               .---.  e           AA | | |  |",file=sys.stderr)
-    print("              /.--./\  e        A",file=sys.stderr)
-    print("             // || \/\  e      ",file=sys.stderr)
-    print("            //|/|| |\/\   aa a    |\o/ o/--",file=sys.stderr)
-    print("           ///|\|| | \/\ .       ~o \.'\.o'",file=sys.stderr)
-    print("          //|\|/|| | |\/\ .      /.` \o'",file=sys.stderr)
-    print("         //\|/|\|| | | \/\ ( (  . \o'",file=sys.stderr)
-    print("___ __ _//|/|\|/|| | | |\/`--' '",file=sys.stderr)
-    print("__/__/__//|\|/|\|| | | | `--'",file=sys.stderr)
-    print("|\|/|\|/|\|/|\|/|| | | | |",file=sys.stderr)
-    print("",file=sys.stderr)
-    
   
 ##################################################################
 # Main function
