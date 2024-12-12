@@ -139,9 +139,9 @@ class MarkovCracker:
             
             ##--Attempt to increase the IP for the curent target level + length
             if not self._increase_ip_for_target(working_target = self.target_level - self.cur_len[0]):
+                #print(f"CHECKPASSDEBUG Level:{self.target_level}")    
                 ##--Attempt to increase the length for the current target level
                 if not self._increase_len_for_target():
-                    
                     ##--If we can't, then check if we can increase the target level
                     ##  Reset the length and IP back to the starting locations
                     if self.increase_target_level == True:
@@ -162,6 +162,7 @@ class MarkovCracker:
                     else:
                         self.cur_guess = None
                         return None
+
             # print(str(self.target_level) + " : " + str(self.cur_len) + " : " + str(self.cur_ip))      
             guess =  self.cur_guess.next_guess()
             #print("level: " + str(self.target_level) + " length = " + str(self.cur_len) + " ip " + str(self.cur_ip))

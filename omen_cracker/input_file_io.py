@@ -52,7 +52,7 @@ def load_rules(base_directory, grammar, min_version=None):
         ##--Check the version of the training set to make sure it is compatible
         if min_version != None:            
             if LooseVersion(grammar['version']) < LooseVersion(min_version):
-                print("Error: The ruleset needs to be created by version " + min_version + "of the training program", file=sys.stderr)
+                print("Error: The ruleset needs to be created by version " + min_version + " of the training program", file=sys.stderr)
                 print("It is recommended that you re-train you ruleset using this version of createNG.py", file=sys.stderr)
                 return False
                 
