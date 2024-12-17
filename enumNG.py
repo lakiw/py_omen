@@ -54,7 +54,7 @@ import time ##--Used for testing
 from omen_cracker.input_file_io import load_rules
 from omen_cracker.markov_cracker import MarkovCracker
 from omen_cracker.optimizer import Optimizer
-from omen_cracker.ascii_art import ascii_fail
+from omen_cracker.ascii_art import ascii_fail, print_banner
 
 
 def parse_command_line(program_info):
@@ -161,25 +161,6 @@ def parse_command_line(program_info):
         return False
 
     return True
-
-
-def print_banner(program_info):
-    """
-    Prints the startup banner when this tool is run
-
-    Inputs:
-        program_info: (Dict) A dictionary containing information and command line info
-        about the program
-
-    Returns:
-        None
-    """
-    print('',file=sys.stderr)
-    print (program_info['name'] + " Version " + program_info['version'], file=sys.stderr)
-    print ("This version written by " + program_info['author'], file=sys.stderr)
-    print ("Original version writtem by the Horst Goertz Institute for IT-Security", file=sys.stderr)
-    print ("Sourcecode available at " + program_info['source'], file=sys.stderr)
-    print('',file=sys.stderr)
 
 
 def main():

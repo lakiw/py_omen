@@ -7,6 +7,25 @@ Contains ascii art for the py_omen toolset
 import sys
 
 
+def print_banner(program_info):
+    """
+    Prints the startup banner when this tool is run
+
+    Inputs:
+        program_info: (Dict) A dictionary containing information and command line info
+        about the program
+
+    Returns:
+        None
+    """
+    print('',file=sys.stderr)
+    print (program_info['name'] + " Version " + program_info['version'], file=sys.stderr)
+    print ("This version written by " + program_info['author'], file=sys.stderr)
+    print ("Original version writtem by the Horst Goertz Institute for IT-Security", file=sys.stderr)
+    print ("Sourcecode available at " + program_info['source'], file=sys.stderr)
+    print('',file=sys.stderr)
+
+
 def print_error():
     """
     ASCII art for displaying an error state before quitting
